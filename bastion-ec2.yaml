@@ -1,73 +1,65 @@
----
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template for Fedora 33 EC2 bastion host
-
 Parameters:
   EC2InstanceType:
     Type: String
-    Default: 't2.micro'
+    Default: t2.micro
   EC2AMI:
-    Type: 'AWS::EC2::Image::Id'
-    Default: 'ami-0aa3a65f84cb982ca'
+    Type: AWS::EC2::Image::Id
+    Default: ami-0aa3a65f84cb982ca
   KeyPairName:
-    Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
-      please create it before continuing.
-    Type: 'AWS::EC2::KeyPair::KeyName'
+    Description: Name of an existing public/private key pair. If you do not have one
+      in this AWS Region, please create it before continuing.
+    Type: AWS::EC2::KeyPair::KeyName
   PublicSubnetID:
-    Description: ID of the public subnet that you want to provision the bastion into (e.g., subnet-a0246dcd).
-    Type: 'AWS::EC2::Subnet::Id'
+    Description: ID of the public subnet that you want to provision the bastion into
+      (e.g., subnet-a0246dcd).
+    Type: AWS::EC2::Subnet::Id
   VPCID:
     Description: ID of the VPC (e.g., vpc-0343606e).
-    Type: 'AWS::EC2::VPC::Id'
+    Type: AWS::EC2::VPC::Id
   RootVolumeSize:
     Description: The size in GB for the root EBS volume.
     Type: Number
     Default: '6'
-
 Rules:
   SubnetsInVPC:
     Assertions:
-      - Assert:
-          'Fn::EachMemberIn':
-            - 'Fn::ValueOfAll':
-                - 'AWS::EC2::Subnet::Id'
-                - VpcId
-            - 'Fn::RefAll': 'AWS::EC2::VPC::Id'
+      - Assert: !EachMemberIn
+          - !ValueOfAll
+            - AWS::EC2::Subnet::Id
+            - VpcId
+          - !RefAll 'AWS::EC2::VPC::Id'
         AssertDescription: All subnets must exist in the VPC.
-
 Resources:
   BastionInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref EC2AMI
-      InstanceType: !Ref EC2InstanceType
-      KeyName: !Ref KeyPairName
-      SubnetId: !Ref PublicSubnetID
+      ImageId: !Ref 'EC2AMI'
+      InstanceType: !Ref 'EC2InstanceType'
+      KeyName: !Ref 'KeyPairName'
+      SubnetId: !Ref 'PublicSubnetID'
       SecurityGroupIds:
-        - !Ref BastionSecurityGroup
+        - !Ref 'BastionSecurityGroup'
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-BastionInstance'
-
   BastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription:
-        !Sub 'Security group for ${AWS::StackName} bastion host'
-      VpcId: !Ref VPCID
-
+      GroupDescription: !Sub 'Security group for ${AWS::StackName} bastion host'
+      VpcId: !Ref 'VPCID'
   BastionAllowInboundSSHFromInternet:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !Ref BastionSecurityGroup
+      GroupId: !Ref 'BastionSecurityGroup'
       IpProtocol: tcp
       FromPort: 22
       ToPort: 22
-      CidrIp: 0.0.0.0/0
-
+      CidrIp: '0.0.0.0/0'
 Outputs:
   BastionPublicIp:
-    Description: 'Bastion Public IP'
+    Description: Bastion Public IP
     Value: !Sub 'ssh://${BastionInstance.PublicIp}'
     Export:
       Name: BastionPublicIp
