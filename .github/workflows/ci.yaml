@@ -1,0 +1,38 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "42 1 1 * *"
+
+jobs:
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install -r requirements.txt
+
+      - name: Lint code.
+        run: yamllint .
+
+      - name: Validate templates.
+        run: |
+          for template in `ls *.yaml`; do
+            echo "${template}"
+            aws cloudformation validate-template --template-body file://"${template}"
+            echo
+          done
