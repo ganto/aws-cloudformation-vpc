@@ -30,6 +30,8 @@ jobs:
         run: yamllint .
 
       - name: Validate templates.
+        env:
+          AWS_DEFAULT_REGION: eu-west-1
         run: |
           for template in `ls *.yaml`; do
             echo "${template}"
