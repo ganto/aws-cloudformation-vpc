@@ -29,6 +29,8 @@ jobs:
       - name: Validate templates.
         env:
           AWS_DEFAULT_REGION: eu-west-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           for template in `ls *.yaml`; do
             echo "${template}"
