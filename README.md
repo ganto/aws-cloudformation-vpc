@@ -44,6 +44,7 @@ aws cloudformation update-stack --stack-name My-first-VPC \
 More information and example code for creating a VPC via CloudFormation can be found at:
 * [docs.aws.amazon.com: AWS::EC2::VPC](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html)
 * [docs.aws.amazon.com: CodeBuild AWS CloudFormation VPC template](https://docs.aws.amazon.com/codebuild/latest/userguide/cloudformation-vpc-template.html)
+* [templates.cloudonaut.io: AWS CloudFormation VPC templates](https://templates.cloudonaut.io/en/stable/vpc/)
 
 
 ## Stack: Bastion Host
@@ -78,3 +79,4 @@ aws cloudformation update-stack --stack-name Bastion-Host \
 ### Further Reading
 
 More information and example code for creating a EC2 instances via CloudFormation can be found at:
+* [aws-quickstart.github.io: Linux Bastion Hosts on the AWS Cloud](https://aws-quickstart.github.io/quickstart-linux-bastion/)
