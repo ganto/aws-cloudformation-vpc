@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "EC2UserData",
+    "ParameterValue": "$(base64 -w0 bastion-ec2-userdata.sh)"
+  },
+  {
     "ParameterKey": "KeyPairName", 
     "ParameterValue": "ganto@aws" 
   },
