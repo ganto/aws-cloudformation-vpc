@@ -53,10 +53,14 @@ AWS CloudFormation stack to deploy a Linux EC2 instance that can be used as a ba
 
 ### Setup, Update, Removal 
 
-Create a new bastion host based on the CloudFormation template and the properties from the `bastion-ec2-parameters.json` JSON file (adjust them if necessary). The default AMI is a Fedora 33 cloud image of the 'eu-west-1' AWS region:
+Create a new bastion host based on the CloudFormation template and the parameters according to your environment. Obviously they need to be adjusted. The default AMI is a Fedora 33 cloud image of the 'eu-west-1' AWS region:
 ```
 aws cloudformation create-stack --stack-name Bastion-Host \
-  --template-body file://bastion-ec2.yaml --parameters file://bastion-ec2--parameters.json
+  --template-body file://bastion-ec2.yaml --parameters \
+  ParameterKey=EC2UserData,ParameterValue=$(base64 -w0 bastion-ec2-userdata.sh)
+  ParameterKey=KeyPairName,ParameterValue=ganto@aws \
+  ParameterKey=PublicSubnetID,ParameterValue=subnet-042f435bc027926e9 \
+  ParameterKey=VPCID,ParameterValue=vpc-04074aaf791f3caf6 \
 ```
 After the instances has been provisioned it can be accessed via `ssh -l fedora <ip-address>`
 
@@ -70,13 +74,8 @@ After making adjustments on the YAML template validate it via:
 aws cloudformation validate-template --template-body file://bastion-ec2.yaml
 ```
 
-Small changes of the template can be directly applied to a instantiated stack via:
-```
-aws cloudformation update-stack --stack-name Bastion-Host \
-  --template-body file://bastion-ec2.yaml --parameters file://bastion-ec2-parameters.json
-```
-
 ### Further Reading
 
 More information and example code for creating a EC2 instances via CloudFormation can be found at:
+* [aws.amazon.com: Best practices for deploying EC2 instances with AWS CloudFormation](https://aws.amazon.com/blogs/infrastructure-and-automation/best-practices-for-deploying-ec2-instances-with-aws-cloudformation/)
 * [aws-quickstart.github.io: Linux Bastion Hosts on the AWS Cloud](https://aws-quickstart.github.io/quickstart-linux-bastion/)
